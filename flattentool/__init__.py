@@ -123,6 +123,9 @@ def unflatten(input_name, base_json=None, input_format=None, output_name='releas
     else:
         base = OrderedDict()
     base[main_sheet_name] = list(spreadsheet_input.unflatten())
-    with codecs.open(output_name, 'w', encoding='utf-8') as fp:
-        json.dump(base, fp, indent=4, default=decimal_default, ensure_ascii=False)
+    if input_format == 'csvDict':
+        json.dump(base, output_name, indent=4, default=decimal_default, ensure_ascii=False)
+    else:
+        with codecs.open(output_name, 'w', encoding='utf-8') as fp:
+            json.dump(base, fp, indent=4, default=decimal_default, ensure_ascii=False)
 

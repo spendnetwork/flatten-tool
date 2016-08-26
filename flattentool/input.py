@@ -211,6 +211,33 @@ class CSVInput(SpreadsheetInput):
                     yield OrderedDict((fieldname, line[fieldname]) for fieldname in dictreader.fieldnames)
 
 
+class CSVInputStringIODict(SpreadsheetInput):
+    encoding = 'utf-8'
+
+    def read_sheets(self):
+        sheet_file_names = self.input_name.keys()
+        if self.main_sheet_name+'.csv' not in sheet_file_names:
+            raise ValueError('Main sheet "{}.csv" not found.'.format(self.main_sheet_name))
+        sheet_file_names.remove(self.main_sheet_name+'.csv')
+
+        self.sub_sheet_names = sorted([fname[:-4] for fname in sheet_file_names if fname.endswith('.csv')])
+
+    def get_sheet_lines(self, sheet_name):
+        inputObject = self.input_name[sheet_name+'.csv']
+        inputObject.seek(0)
+
+        if sys.version > '3':  # If Python 3 or greater
+            # Pass the encoding to the open function
+                dictreader = DictReader(inputObject)
+                for line in dictreader:
+                    yield OrderedDict((fieldname, line[fieldname]) for fieldname in dictreader.fieldnames)
+        else:  # If Python 2
+            # Pass the encoding to DictReader
+            dictreader = DictReader(inputObject, encoding=self.encoding)
+            for line in dictreader:
+                yield OrderedDict((fieldname, line[fieldname]) for fieldname in dictreader.fieldnames)
+
+
 class XLSXInput(SpreadsheetInput):
     def read_sheets(self):
         self.workbook = openpyxl.load_workbook(self.input_name, data_only=True)
@@ -231,7 +258,8 @@ class XLSXInput(SpreadsheetInput):
 
 FORMATS = {
     'xlsx': XLSXInput,
-    'csv': CSVInput
+    'csv': CSVInput,
+    'csvDict': CSVInputStringIODict,
 }
 
 
