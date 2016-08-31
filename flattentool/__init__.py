@@ -118,8 +118,11 @@ def unflatten(input_name, base_json=None, input_format=None, output_name='releas
     spreadsheet_input.encoding = encoding
     spreadsheet_input.read_sheets()
     if base_json:
-        with open(base_json) as fp:
-            base = json.load(fp, object_pairs_hook=OrderedDict)
+        if input_format == 'csvDict':
+            base = json.load(base_json, object_pairs_hook=OrderedDict)
+        else:
+            with open(base_json) as fp:
+                base = json.load(fp, object_pairs_hook=OrderedDict)
     else:
         base = OrderedDict()
     base[main_sheet_name] = list(spreadsheet_input.unflatten())
