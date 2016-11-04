@@ -108,7 +108,11 @@ will print help information specific to that subcommand.
 
 ### Creating spreadsheet templates
 
-Download https://raw.githubusercontent.com/open-contracting/standard/master/standard/schema/release-schema.json to the current directory.
+Download the release-schema.json to the current directory.
+
+    curl https://raw.githubusercontent.com/open-contracting/standard/master/standard/schema/release-schema.json > release-schema.json
+   
+Create templates from the schema.
 
     flatten-tool create-template --output-format all --output-name template --schema release-schema.json --main-sheet-name releases
 
@@ -118,6 +122,8 @@ See `flatten-tool --help` for details of the commandline options.
 
 
 ### Converting a populated spreadsheet to JSON
+
+Create the base.json file to populate.
 
     cp base.json.example base.json
 
